@@ -56,7 +56,17 @@ void attack(entity &a, entity &b) {
 
         cout << "You failed to parry!\n";
     }
+    if(strcmp(b.name, Boss.name) == 0)
+    {
+        int chance = rand()%2;
+        if(chance == 1)
+        {
+            cout << "Boss parried.\n";
+            return;
+        }
+        cout << "Boss failed to parry.\n";
 
+    }
     b.shield -= 1;
     b.hp -= damage;
     cout << a.name << " attacked " << b.name << " for " << damage << " damage" << endl;
