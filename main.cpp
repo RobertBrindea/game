@@ -4,7 +4,7 @@ using namespace std;
 
 struct entity{
     char name[50];
-    int hp=100, shield=50, potions=3;
+    int hp=100, shield=30, potions=3;
 };
 
 void heal(entity &p) {
@@ -21,8 +21,10 @@ void heal(entity &p) {
 }
 
 void attack(entity &a, entity &b) {
-    int damage=10;
-    damage = damage - (damage * b.shield) / 100;
+    int damage=25, nr = rand()%51 + 50;
+    damage = (damage * nr) / 100;
+    damage = (damage * b.shield) / 100;
+    damage += rand()%3;
     b.shield -= 1;
     b.hp -= damage;
     cout << a.name << " attacked " << b.name << " for " << damage << " damage" << endl;
