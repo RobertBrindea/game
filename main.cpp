@@ -49,6 +49,7 @@ int main()
             continue;
         }
         bossMove(Player, Boss);
+        system("CLS");
         int state = checkAlive(Player, Boss);
         if(state)
         {
