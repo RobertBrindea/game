@@ -7,6 +7,9 @@ struct entity{
     int hp=100, shield=30, potions=3;
 };
 
+entity Player, Boss;
+
+
 void heal(entity &p) {
     if(p.potions > 0) {
         p.stamina = 100;
@@ -21,12 +24,41 @@ void heal(entity &p) {
     }
 }
 
+bool parried()
+{
+    int value = rand()%2;
+    int expected = -1;
+    while(expected == -1)
+    {
+         string s;
+        cout << "Where do you want to parry: (left/right)\n";
+        cin >> s;
+        if(s == "left") expected = 0;
+        else if(s == "right") expected = 1;
+        else cout << "Invalid parry. Try again!\n";
+    }
+
+    return (expected == value);
+}
+
 void attack(entity &a, entity &b) {
     if(a.stamina)
     int damage=50, nr = rand()%51 + 50;
     damage = (damage * nr) / 100;
     damage = damage - (damage * b.shield) / 100;
     damage += rand()%3;
+    if(strcmp(b.name, Player.name) == 0)
+    {
+        cout << "The boss is attacking you.\n";
+        if(parried())
+        {
+            cout << "You parried\n";
+            return;
+        }
+
+        cout << "You failed to parry!\n";
+    }
+
     b.shield -= 1;
     b.hp -= damage;
     cout << a.name << " attacked " << b.name << " for " << damage << " damage" << endl;
@@ -57,7 +89,6 @@ void showHealthAndPotions(entity &a, entity &b) {
 int main()
 {
     srand(time(0));
-    entity Player, Boss;
     cout << "Enter your name: ";
     cin >> Player.name;
 	strcpy(Boss.name, "Boss");
@@ -76,7 +107,10 @@ int main()
             cout << "Invalid action\n";
             continue;
         }
+
         bossMove(Player, Boss);
+        system("PAUSE");
+        system("CLS");
         int state = checkAlive(Player, Boss);
         if(state)
         {
