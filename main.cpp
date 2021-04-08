@@ -1,3 +1,5 @@
+/// very advanced fight game made by a chad and a furry
+
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -115,8 +117,8 @@ int main()
             cout << "Invalid action\n";
             continue;
         }
-
-        bossMove(Player, Boss);
+        if(Boss.hp > 0)
+            bossMove(Player, Boss);
         system("PAUSE");
         system("CLS");
         int state = checkAlive(Player, Boss);
