@@ -12,7 +12,6 @@ entity Player, Boss;
 
 void heal(entity &p) {
     if(p.potions > 0) {
-        p.stamina = 100;
         p.potions--;
         p.hp += 50;
         if(p.hp > 100)
