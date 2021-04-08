@@ -9,6 +9,7 @@ struct entity{
 
 void heal(entity &p) {
     if(p.potions > 0) {
+        p.stamina = 100;
         p.potions--;
         p.hp += 50;
         if(p.hp > 100)
@@ -21,9 +22,10 @@ void heal(entity &p) {
 }
 
 void attack(entity &a, entity &b) {
-    int damage=25, nr = rand()%51 + 50;
+    if(a.stamina)
+    int damage=50, nr = rand()%51 + 50;
     damage = (damage * nr) / 100;
-    damage = (damage * b.shield) / 100;
+    damage = damage - (damage * b.shield) / 100;
     damage += rand()%3;
     b.shield -= 1;
     b.hp -= damage;
@@ -47,6 +49,11 @@ void bossMove(entity &a, entity &b) {
     attack(b, a);
 }
 
+void showHealthAndPotions(entity &a, entity &b) {
+    cout << a.name << " has " << a.hp << " health and " << a.potions << " potions\n";
+    cout << b.name << " has " << b.hp << " health and " << b.potions << " potions\n";
+}
+
 int main()
 {
     srand(time(0));
@@ -56,6 +63,7 @@ int main()
 	strcpy(Boss.name, "Boss");
 	while(1)
     {
+        showHealthAndPotions(Player, Boss);
         cout << "Enter your action: (attack/heal)\n";
         string action;
         cin >> action;
