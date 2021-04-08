@@ -99,7 +99,10 @@ int main()
             cout << "Invalid action\n";
             continue;
         }
+
         bossMove(Player, Boss);
+        system("PAUSE");
+        system("CLS");
         int state = checkAlive(Player, Boss);
         if(state)
         {
