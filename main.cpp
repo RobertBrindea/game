@@ -41,7 +41,6 @@ bool parried()
 }
 
 void attack(entity &a, entity &b) {
-    if(a.stamina)
     int damage=50, nr = rand()%51 + 50;
     damage = (damage * nr) / 100;
     damage = damage - (damage * b.shield) / 100;
