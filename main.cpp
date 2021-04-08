@@ -1,37 +1,57 @@
-#include <iostream>
 #include <bits/stdc++.h>
 
 using namespace std;
 
 struct entity{
     char name[50];
-    int hp=100, shield=50, potions=3;
+    int hp=100, shield=30, potions=3;
 };
 
-void heal(entity &p)
-{
-    cout << p.name << " healed.\n";
+void heal(entity &p) {
+    if(p.potions > 0) {
+        p.potions--;
+        p.hp += 50;
+        if(p.hp > 100)
+            p.hp = 100;
+        cout << p.name << " healed and now has " << p.hp << " health" << endl;
+    }
+    else {
+        cout << "You have no potions" << endl;
+    }
 }
 
-void attack(entity &p, entity &b)
-{
-    cout << p.name << " attacked" << b.name << ".\n";
+void attack(entity &a, entity &b) {
+    int damage=25, nr = rand()%51 + 50;
+    damage = (damage * nr) / 100;
+    damage = (damage * b.shield) / 100;
+    damage += rand()%3;
+    b.shield -= 1;
+    b.hp -= damage;
+    cout << a.name << " attacked " << b.name << " for " << damage << " damage" << endl;
+    cout << b.name << " now has " << b.hp << " health" << endl;
 }
 
-int checkAlive(entity &p, entity &b)
-{
-    return 1;
+int checkAlive(entity &a, entity &b) {
+    if(a.hp <= 0)
+        return 1;
+    else if(b.hp <= 0)
+        return 2;
+    return 0;
 }
 
-void bossMove(entity &p, entity &b)
-{
-    cout << "Boss random action";
+void bossMove(entity &a, entity &b) {
+    if(b.hp < 50 && rand()%100 < 10+(50-b.hp)) {
+        heal(b);
+        return;
+    }
+    attack(b, a);
 }
 
 int main()
 {
+    srand(time(0));
     entity Player, Boss;
-    cout << "Enter your name:";
+    cout << "Enter your name: ";
     cin >> Player.name;
 	strcpy(Boss.name, "Boss");
 	while(1)
