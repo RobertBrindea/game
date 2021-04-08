@@ -1,6 +1,11 @@
 /// very advanced fight game made by a chad and a furry
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <cmath>
+#include <cstring>
+#include <string>
+#include <random>
+#include <time.h>
 
 using namespace std;
 
