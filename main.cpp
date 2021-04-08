@@ -6,7 +6,7 @@ using namespace std;
 
 struct entity{
     char name[50];
-    int hp=100, shield=30, potions=3;
+    int hp=100, shield=30, potions=3, stamina=100;
 };
 
 entity Player, Boss;
@@ -14,6 +14,7 @@ entity Player, Boss;
 
 void heal(entity &p) {
     if(p.potions > 0) {
+        p.stamina = 100;
         p.potions--;
         p.hp += 50;
         if(p.hp > 100)
@@ -43,6 +44,7 @@ bool parried()
 }
 
 void attack(entity &a, entity &b) {
+    a.stamina -= 20;
     int damage=50, nr = rand()%51 + 50;
     damage = (damage * nr) / 100;
     damage = damage - (damage * b.shield) / 100;
@@ -75,6 +77,11 @@ void attack(entity &a, entity &b) {
     cout << b.name << " now has " << b.hp << " health" << endl;
 }
 
+void addStamina(entity &p) {
+    p.stamina += 50;
+    cout << p.name << " waited and raised their stamina to " << p.stamina << endl;
+}
+
 int checkAlive(entity &a, entity &b) {
     if(a.hp <= 0)
         return 1;
@@ -88,30 +95,36 @@ void bossMove(entity &a, entity &b) {
         heal(b);
         return;
     }
+    if(b.stamina < 20 || (b.stamina < 60 && rand()%100 < 20)) {
+        addStamina(b);
+        return;
+    }
     attack(b, a);
 }
 
 void showHealthAndPotions(entity &a, entity &b) {
-    cout << a.name << " has " << a.hp << " health and " << a.potions << " potions\n";
-    cout << b.name << " has " << b.hp << " health and " << b.potions << " potions\n";
+    cout << a.name << " has " << a.hp << " health and " << a.potions << " potions | stamina at " << a.stamina << endl;
+    cout << b.name << " has " << b.hp << " health and " << b.potions << " potions | stamina at " << b.stamina << endl;
 }
 
 int main()
 {
     srand(time(0));
     cout << "Enter your name: ";
-    cin >> Player.name;
+    cin.getline(Player.name, 50);
 	strcpy(Boss.name, "Boss");
 	while(1)
     {
         showHealthAndPotions(Player, Boss);
-        cout << "Enter your action: (attack/heal)\n";
+        cout << "Enter your action: (attack/heal/wait)\n";
         string action;
         cin >> action;
-        if(action == "attack")
+        if(action == "attack" && Player.stamina >= 20)
             attack(Player, Boss);
         else if(action == "heal")
             heal(Player);
+        else if(action == "wait")
+            addStamina(Player);
         else
         {
             cout << "Invalid action\n";
@@ -130,6 +143,6 @@ int main()
         }
 
     }
-    cout << "Game over";
+    cout << "Game over, play again if you want to suffer once more";
 	return 0;
 }
