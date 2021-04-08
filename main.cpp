@@ -67,7 +67,7 @@ void attack(entity &a, entity &b) {
     }
     if(strcmp(b.name, Boss.name) == 0)
     {
-        int chance = rand()%2;
+        int chance = rand()%3;
         if(chance == 1)
         {
             cout << "Boss parried.\n";
