@@ -41,9 +41,9 @@ bool parried()
 }
 
 void attack(entity &a, entity &b) {
-    int damage=25, nr = rand()%51 + 50;
+    int damage=50, nr = rand()%51 + 50;
     damage = (damage * nr) / 100;
-    damage = (damage * b.shield) / 100;
+    damage = damage - (damage * b.shield) / 100;
     damage += rand()%3;
     if(strcmp(b.name, Player.name) == 0)
     {
@@ -89,6 +89,11 @@ void bossMove(entity &a, entity &b) {
     attack(b, a);
 }
 
+void showHealthAndPotions(entity &a, entity &b) {
+    cout << a.name << " has " << a.hp << " health and " << a.potions << " potions\n";
+    cout << b.name << " has " << b.hp << " health and " << b.potions << " potions\n";
+}
+
 int main()
 {
     srand(time(0));
@@ -97,6 +102,7 @@ int main()
 	strcpy(Boss.name, "Boss");
 	while(1)
     {
+        showHealthAndPotions(Player, Boss);
         cout << "Enter your action: (attack/heal)\n";
         string action;
         cin >> action;
