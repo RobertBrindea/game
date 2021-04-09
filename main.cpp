@@ -257,6 +257,7 @@ int main()
     SetConsoleTextAttribute(hConsole, base_text_color);
 
     srand(time(0));
+    system("CLS");
     cout << "Enter your name: ";
     cin.getline(Player.name, 50);
 	strcpy(Boss.name, "Boss");
