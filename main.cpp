@@ -178,5 +178,6 @@ int main()
 
     }
     cout << "Game over, play again if you want to suffer once more";
+    system("PAUSE");
 	return 0;
 }
