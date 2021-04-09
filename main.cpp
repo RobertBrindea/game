@@ -1,11 +1,6 @@
 /// very advanced fight game made by a chad and a furry
 
-#include <iostream>
-#include <cmath>
-#include <cstring>
-#include <string>
-#include <random>
-#include <time.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -15,7 +10,7 @@ struct entity{
 };
 
 entity Player, Boss;
-
+int chargePercent=0;
 
 void heal(entity &p) {
     if(p.potions > 0) {
@@ -37,49 +32,75 @@ bool parried()
     int expected = -1;
     while(expected == -1)
     {
-         string s;
+        string s;
         cout << "Where do you want to parry: (left/right)\n";
         cin >> s;
         if(s == "left") expected = 0;
         else if(s == "right") expected = 1;
         else cout << "Invalid parry. Try again!\n";
     }
-
     return (expected == value);
 }
 
-void attack(entity &a, entity &b) {
+void attack(entity &a, entity &b, int chargeDamage) {
     a.stamina -= 20;
-    int damage=50, nr = rand()%51 + 50;
+    int damage=40, nr=rand()%51+50, bossChance=1;
     damage = (damage * nr) / 100;
+    if(chargeDamage != 0) {
+        damage = chargeDamage;
+        chargePercent = -10;
+        bossChance = 5;
+    }
     damage = damage - (damage * b.shield) / 100;
-    damage += rand()%3;
     if(strcmp(b.name, Player.name) == 0)
     {
+        if(chargePercent > 100) chargePercent = 100;
         cout << "The boss is attacking you.\n";
         if(parried())
         {
             cout << "You parried\n";
             return;
         }
-
         cout << "You failed to parry!\n";
     }
     if(strcmp(b.name, Boss.name) == 0)
     {
+        chargePercent += 10;
         int chance = rand()%3;
-        if(chance == 1)
+        if(chance == bossChance)
         {
             cout << "Boss parried.\n";
             return;
         }
         cout << "Boss failed to parry.\n";
-
     }
-    b.shield -= 1;
+    b.shield -= 2;
     b.hp -= damage;
     cout << a.name << " attacked " << b.name << " for " << damage << " damage" << endl;
     cout << b.name << " now has " << b.hp << " health" << endl;
+}
+
+int chargeWeapon(int chargePercent) {
+    chargePercent = 0;
+    int damage = 15;
+    cout << "Current attack damage charge at " << damage << ". Initiating power modules\n";
+    for(int i=1; damage < 75; i++) {
+        int nr = rand()%15 + 1, nrinput;
+        cout << "Powering up module " << i << ". Complete following sequence for full charge:\n";
+        for(int k=1; k<=7; k++)
+            cout << nr*k << " ";
+        cin >> nrinput;
+        if(nrinput == nr*8) {
+            damage += 15;
+            cout << "Module " << i << " at full power. Current charge at " << damage << " damage\n";
+        }
+        else {
+            cout << "Module " << i << " startup failed. Current charge at " << damage << " damage\n";
+            return damage;
+        }
+    }
+    cout << "Weapon fully charged, engaging attack\n";
+    return damage;
 }
 
 void addStamina(entity &p) {
@@ -96,7 +117,7 @@ int checkAlive(entity &a, entity &b) {
 }
 
 void bossMove(entity &a, entity &b) {
-    if(b.hp < 50 && rand()%100 < 10+(50-b.hp)) {
+    if(b.hp < 50 && rand()%100 < 10+(50-b.hp) && b.potions > 0) {
         heal(b);
         return;
     }
@@ -104,11 +125,11 @@ void bossMove(entity &a, entity &b) {
         addStamina(b);
         return;
     }
-    attack(b, a);
+    attack(b, a, 0);
 }
 
 void showHealthAndPotions(entity &a, entity &b) {
-    cout << a.name << " has " << a.hp << " health and " << a.potions << " potions | stamina at " << a.stamina << endl;
+    cout << a.name << " has " << a.hp << " health and " << a.potions << " potions | stamina at " << a.stamina << " | charge " << chargePercent << "%" << endl;
     cout << b.name << " has " << b.hp << " health and " << b.potions << " potions | stamina at " << b.stamina << endl;
 }
 
@@ -121,15 +142,23 @@ int main()
 	while(1)
     {
         showHealthAndPotions(Player, Boss);
-        cout << "Enter your action: (attack/heal/wait)\n";
+        cout << "Enter your action: (attack/heal/wait/charge)\n";
         string action;
         cin >> action;
         if(action == "attack" && Player.stamina >= 20)
-            attack(Player, Boss);
+            attack(Player, Boss, 0);
         else if(action == "heal")
             heal(Player);
         else if(action == "wait")
             addStamina(Player);
+        else if(action == "charge") {
+            if(chargePercent == 100)
+                attack(Player, Boss, chargeWeapon(chargePercent));
+            else {
+                cout << "Insufficient charge\n";
+                continue;
+            }
+        }
         else
         {
             cout << "Invalid action\n";
