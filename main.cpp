@@ -6,7 +6,7 @@ using namespace std;
 
 struct entity{
     char name[50];
-    int hp=100, shield=30, potions=3, stamina=100;
+    int hp=100, shield=50, potions=3, stamina=100;
 };
 
 entity Player, Boss;
