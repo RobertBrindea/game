@@ -11,14 +11,14 @@ struct entity{
 };
 
 entity Player, Boss;
-int chargePercent=0;
-const int base_text_color = 10, health_text_color = 12;
+int chargePercent=100;
+const int base_text_color = 10, health_text_color = 12, damage_text_color = 11;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-void print_health(int val)
+void fancy_print(int val, int color, string message)
 {
-    SetConsoleTextAttribute(hConsole, health_text_color);
-    cout << val << " health";
+    SetConsoleTextAttribute(hConsole, color);
+    cout << val << " " << message;
     SetConsoleTextAttribute(hConsole, base_text_color);
 }
 
@@ -30,7 +30,7 @@ void heal(entity &p) {
         if(p.hp > 100)
             p.hp = 100;
         cout << p.name << " healed and now has ";
-        print_health(p.hp);
+        fancy_print(p.hp, health_text_color, "health");
         cout << endl;
     }
     else {
@@ -85,7 +85,12 @@ void attack(entity &a, entity &b, int chargeDamage) {
         bossChance = 5;
     }
     damage = damage - (damage * b.shield) / 100;
-    if(strcmp(a.name, Player.name) == 0 && parry(Player, Boss, 0)) return;
+    if(strcmp(a.name, Player.name) == 0 && parry(Player, Boss, 0))
+    {
+        chargePercent += 10;
+        if(chargePercent > 100) chargePercent = 100;
+        return;
+    }
     if(strcmp(a.name, Boss.name) == 0 && parry(Boss, Player, bossChance)) return;
     if(strcmp(b.name, Boss.name) == 0)
     {
@@ -94,13 +99,16 @@ void attack(entity &a, entity &b, int chargeDamage) {
     }
     b.shield -= 2;
     b.hp -= damage;
-    cout << a.name << " attacked " << b.name << " for " << damage << " damage" << endl;
+    cout << a.name << " attacked " << b.name << " for ";
+    fancy_print(damage, damage_text_color, "damage");
+    cout << endl;
     cout << b.name << " now has ";
-    print_health(b.hp);
+    fancy_print(b.hp, health_text_color, "health");
     cout << endl;
 }
 
 int chargeWeapon(int chargePercent) {
+    SetConsoleTextAttribute(hConsole, damage_text_color);
     chargePercent = 0;
     int damage = 15;
     cout << "Current attack damage charge at " << damage << ". Initiating power modules\n";
@@ -112,14 +120,16 @@ int chargeWeapon(int chargePercent) {
         cin >> nrinput;
         if(nrinput == nr*8) {
             damage += 15;
-            cout << "Module " << i << " at full power. Current charge at " << damage << " damage\n";
+            cout << "Module " << i << " at full power. Current charge at " << damage << " damage.\n";
         }
         else {
-            cout << "Module " << i << " startup failed. Current charge at " << damage << " damage\n";
+            cout << "Module " << i << " startup failed. Current charge at " << damage << " damage.\n";
+            SetConsoleTextAttribute(hConsole, base_text_color);
             return damage;
         }
     }
     cout << "Weapon fully charged, engaging attack\n";
+    SetConsoleTextAttribute(hConsole, base_text_color);
     return damage;
 }
 
@@ -169,10 +179,10 @@ void bossMove(entity &a, entity &b) {
 
 void showHealthAndPotions(entity &a, entity &b) {
     cout << a.name << " has ";
-    print_health(a.hp);
+    fancy_print(a.hp, health_text_color, "health");
     cout << " and " << a.potions << " potions | stamina at " << a.stamina << " | charge " << chargePercent << "%" << endl;
     cout << b.name << " has ";
-    print_health(b.hp);
+    fancy_print(b.hp, health_text_color, "health");
     cout << " and " << b.potions << " potions | stamina at " << b.stamina << endl;
 }
 
