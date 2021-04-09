@@ -96,6 +96,7 @@ void attack(entity &a, entity &b, int chargeDamage) {
     if(strcmp(a.name, Player.name) == 0) {
         b.shield -= 2;
         chargePercent += 10;
+        if(chargePercent > 100) chargePercent = 100;
         if(parry(a, b, bossChance))
             return;
     }
@@ -143,6 +144,8 @@ int chargeWeapon(int chargePercent) {
 
 void addStamina(entity &p) {
     p.stamina += 50;
+    if(p.stamina > 100)
+        p.stamina = 100;
     fancy_print(-1, name_text_color, p.name);
     cout << " waited and raised their stamina to " << p.stamina << endl;
 }
