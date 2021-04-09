@@ -16,7 +16,7 @@ void heal(entity &p) {
     if(p.potions > 0) {
         p.stamina = 100;
         p.potions--;
-        p.hp += 50;
+        p.hp += 40;
         if(p.hp > 100)
             p.hp = 100;
         cout << p.name << " healed and now has " << p.hp << " health" << endl;
@@ -44,7 +44,7 @@ bool parried()
 
 void attack(entity &a, entity &b, int chargeDamage) {
     a.stamina -= 20;
-    int damage=40, nr=rand()%51+50, bossChance=1;
+    int damage=35, nr=rand()%51+50, bossChance=1;
     damage = (damage * nr) / 100;
     if(chargeDamage != 0) {
         damage = chargeDamage;
@@ -132,7 +132,7 @@ void bossMove(entity &a, entity &b) {
         lookForPotions(b);
         return;
     }
-    if(b.hp < 50 && rand()%100 < 10+(50-b.hp)) {
+    if(b.hp < 50 && rand()%100 < 30+(50-b.hp)) {
         if(b.potions == 0) {
             lookForPotions(b);
             return;
