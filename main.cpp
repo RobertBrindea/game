@@ -26,20 +26,41 @@ void heal(entity &p) {
     }
 }
 
-bool parried()
+bool parry(entity &a, entity &b, int bossChance)
 {
-    int value = rand()%2;
-    int expected = -1;
-    while(expected == -1)
+    cout << a.name << " is trying to attack " << b.name << "\n";
+    if(strcmp(b.name, Player.name) == 0)
     {
-        string s;
-        cout << "Where do you want to parry: (left/right)\n";
-        cin >> s;
-        if(s == "left") expected = 0;
-        else if(s == "right") expected = 1;
-        else cout << "Invalid parry. Try again!\n";
+        int value = rand()%2;
+        int expected = -1;
+        while(expected == -1)
+        {
+            string s;
+            cout << "Where do you want to parry: (left/right)\n";
+            cin >> s;
+            if(s == "left") expected = 0;
+            else if(s == "right") expected = 1;
+            else cout << "Invalid parry. Try again!\n";
+        }
+        if(expected == value)
+        {
+            cout << "You parried.\n";
+            return 1;
+        }
+        cout << "You failed to parry.\n";
+        return 0;
     }
-    return (expected == value);
+    else if(strcmp(b.name, Boss.name) == 0)
+    {
+        int chance = rand()%3;
+        if(chance == bossChance)
+        {
+            cout << "Boss parried.\n";
+            return 1;
+        }
+        cout << "Boss failed to parry.\n";
+        return 0;
+    }
 }
 
 void attack(entity &a, entity &b, int chargeDamage) {
@@ -52,27 +73,12 @@ void attack(entity &a, entity &b, int chargeDamage) {
         bossChance = 5;
     }
     damage = damage - (damage * b.shield) / 100;
-    if(strcmp(b.name, Player.name) == 0)
-    {
-        cout << "The boss is attacking you.\n";
-        if(parried())
-        {
-            cout << "You parried\n";
-            return;
-        }
-        cout << "You failed to parry!\n";
-    }
+    if(strcmp(a.name, Player.name) == 0 && parry(Player, Boss, 0)) return;
+    if(strcmp(a.name, Boss.name) == 0 && parry(Boss, Player, bossChance)) return;
     if(strcmp(b.name, Boss.name) == 0)
     {
         chargePercent += 10;
         if(chargePercent > 100) chargePercent = 100;
-        int chance = rand()%3;
-        if(chance == bossChance)
-        {
-            cout << "Boss parried.\n";
-            return;
-        }
-        cout << "Boss failed to parry.\n";
     }
     b.shield -= 2;
     b.hp -= damage;
