@@ -44,7 +44,7 @@ bool parried()
 
 void attack(entity &a, entity &b, int chargeDamage) {
     a.stamina -= 20;
-    int damage=35, nr=rand()%51+50, bossChance=1;
+    int damage=40, nr=rand()%51+50, bossChance=1;
     damage = (damage * nr) / 100;
     if(chargeDamage != 0) {
         damage = chargeDamage;
@@ -128,7 +128,7 @@ int checkAlive(entity &a, entity &b) {
 }
 
 void bossMove(entity &a, entity &b) {
-    if(rand()%100 < 5) {
+    if(rand()%100 < 15) {
         lookForPotions(b);
         return;
     }
@@ -152,20 +152,28 @@ void showHealthAndPotions(entity &a, entity &b) {
     cout << b.name << " has " << b.hp << " health and " << b.potions << " potions | stamina at " << b.stamina << endl;
 }
 
-int main()
-{
-    srand(time(0));
-    cout << "Enter your name: ";
-    cin.getline(Player.name, 50);
-	strcpy(Boss.name, "Boss");
-	while(1)
-    {
+void newBossFight(entity &Player, entity &Boss, int &act) {
+    Boss.hp = 50*act;
+    Boss.potions = act;
+    Boss.shield = 50;
+    Boss.stamina = 100;
+    Player.potions = act+1;
+    Player.hp = 100;
+    Player.shield = 50+(10*(act-2));
+    Player.stamina = 100;
+    while(1) {
         showHealthAndPotions(Player, Boss);
         cout << "Enter your action: (attack/heal/wait/charge/search)\n";
         string action;
         cin >> action;
-        if(action == "attack" && Player.stamina >= 20)
-            attack(Player, Boss, 0);
+        if(action == "attack") {
+            if(Player.stamina >= 20)
+                attack(Player, Boss, 0);
+            else {
+                cout << "No stamina\n";
+                continue;
+            }
+        }
         else if(action == "heal")
             heal(Player);
         else if(action == "wait")
@@ -180,8 +188,7 @@ int main()
         }
         else if(action == "search")
             lookForPotions(Player);
-        else
-        {
+        else {
             cout << "Invalid action\n";
             continue;
         }
@@ -190,15 +197,40 @@ int main()
         system("PAUSE");
         system("CLS");
         int state = checkAlive(Player, Boss);
-        if(state)
-        {
-            if(state == 1) cout << "You lost!\n";
+        if(state) {
+            if(state == 1) {
+                cout << "You lost!\n";
+                return;
+            }
             else cout << "You won!\n";
             break;
         }
-
     }
-    cout << "Game over, play again if you want to suffer once more";
+    act++;
+    if(act < 6) {
+        int newGame;
+        cout << "If you want to go to the next stage, press 1. If not, press anything else: ";
+        cin >> newGame;
+        if(newGame == 1)
+            newBossFight(Player, Boss, act);
+    }
+    else
+        cout << "There are no more bosses, you won!\n";
+}
+
+int main()
+{
+    srand(time(0));
+    cout << "Enter your name: ";
+    cin.getline(Player.name, 50);
+	strcpy(Boss.name, "Boss");
+	int nrofbosses = 2;
+	newBossFight(Player, Boss, nrofbosses);
+
+    cout << "Game over, play again if you want to suffer once more\n";
+    cout << "In the end, you beat up " << nrofbosses-1 << " bosses!\n";
+    if(nrofbosses == 6)
+        cout << "Pretty impressive!\n";
     system("PAUSE");
 	return 0;
 }
