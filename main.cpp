@@ -54,7 +54,6 @@ void attack(entity &a, entity &b, int chargeDamage) {
     damage = damage - (damage * b.shield) / 100;
     if(strcmp(b.name, Player.name) == 0)
     {
-        if(chargePercent > 100) chargePercent = 100;
         cout << "The boss is attacking you.\n";
         if(parried())
         {
@@ -66,6 +65,7 @@ void attack(entity &a, entity &b, int chargeDamage) {
     if(strcmp(b.name, Boss.name) == 0)
     {
         chargePercent += 10;
+        if(chargePercent > 100) chargePercent = 100;
         int chance = rand()%3;
         if(chance == bossChance)
         {
