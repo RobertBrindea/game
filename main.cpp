@@ -11,14 +11,15 @@ struct entity{
 };
 
 entity Player, Boss;
-int chargePercent=100;
-const int base_text_color = 10, health_text_color = 12, damage_text_color = 11;
+int chargePercent=0;
+const int base_text_color = 10, health_text_color = 12, damage_text_color = 11, name_text_color = 15;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 void fancy_print(int val, int color, string message)
 {
     SetConsoleTextAttribute(hConsole, color);
-    cout << val << " " << message;
+    if(val == -1) cout << message;
+    else cout << val << " " << message;
     SetConsoleTextAttribute(hConsole, base_text_color);
 }
 
@@ -29,7 +30,8 @@ void heal(entity &p) {
         p.hp += 40;
         if(p.hp > 100)
             p.hp = 100;
-        cout << p.name << " healed and now has ";
+        fancy_print(-1, name_text_color, p.name);
+        cout << " healed and now has ";
         fancy_print(p.hp, health_text_color, "health");
         cout << endl;
     }
@@ -40,7 +42,10 @@ void heal(entity &p) {
 
 bool parry(entity &a, entity &b, int bossChance)
 {
-    cout << a.name << " is trying to attack " << b.name << "\n";
+    fancy_print(-1, name_text_color, a.name);
+    cout << " is trying to attack ";
+    fancy_print(-1, name_text_color, b.name);
+    cout << "\n";
     if(strcmp(b.name, Player.name) == 0)
     {
         int value = rand()%2;
@@ -67,10 +72,12 @@ bool parry(entity &a, entity &b, int bossChance)
         int chance = rand()%3;
         if(chance == bossChance)
         {
-            cout << "Boss parried.\n";
+            fancy_print(-1, name_text_color, b.name);
+            cout << " parried.\n";
             return 1;
         }
-        cout << "Boss failed to parry.\n";
+        fancy_print(-1, name_text_color, b.name);
+        cout << " failed to parry.\n";
         return 0;
     }
 }
@@ -99,10 +106,12 @@ void attack(entity &a, entity &b, int chargeDamage) {
     }
     b.shield -= 2;
     b.hp -= damage;
-    cout << a.name << " attacked " << b.name << " for ";
+    fancy_print(-1, name_text_color, a.name);
+    cout << " attacked " << b.name << " for ";
     fancy_print(damage, damage_text_color, "damage");
     cout << endl;
-    cout << b.name << " now has ";
+    fancy_print(-1, name_text_color, b.name);
+    cout << " now has ";
     fancy_print(b.hp, health_text_color, "health");
     cout << endl;
 }
@@ -135,7 +144,8 @@ int chargeWeapon(int chargePercent) {
 
 void addStamina(entity &p) {
     p.stamina += 50;
-    cout << p.name << " waited and raised their stamina to " << p.stamina << endl;
+    fancy_print(-1, name_text_color, p.name);
+    cout << " waited and raised their stamina to " << p.stamina << endl;
 }
 
 void lookForPotions(entity &p) {
@@ -143,10 +153,14 @@ void lookForPotions(entity &p) {
     p.stamina += 20;
     if(chance < 40) {
         p.potions++;
-        cout << p.name << " has found 1 potion\n";
+        fancy_print(-1, name_text_color, p.name);
+        cout << " has found 1 potion\n";
     }
     else
-        cout << p.name << " looked for potions, but didn't find any\n";
+    {
+        fancy_print(-1, name_text_color, p.name);
+        cout << " looked for potions, but didn't find any\n";
+    }
 }
 
 int checkAlive(entity &a, entity &b) {
@@ -178,10 +192,12 @@ void bossMove(entity &a, entity &b) {
 }
 
 void showHealthAndPotions(entity &a, entity &b) {
-    cout << a.name << " has ";
+    fancy_print(-1, name_text_color, a.name);
+    cout << " has ";
     fancy_print(a.hp, health_text_color, "health");
     cout << " and " << a.potions << " potions | stamina at " << a.stamina << " | charge " << chargePercent << "%" << endl;
-    cout << b.name << " has ";
+    fancy_print(-1, name_text_color, b.name);
+    cout << " has ";
     fancy_print(b.hp, health_text_color, "health");
     cout << " and " << b.potions << " potions | stamina at " << b.stamina << endl;
 }
