@@ -11,7 +11,7 @@ struct entity{
 };
 
 entity Player, Boss;
-int chargePercent=0;
+int chargePercent=100;
 const int base_text_color = 10, health_text_color = 12, damage_text_color = 11, name_text_color = 15;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -87,24 +87,23 @@ void attack(entity &a, entity &b, int chargeDamage) {
     int damage=40, nr=rand()%51+50, bossChance=1;
     damage = (damage * nr) / 100;
     if(chargeDamage != 0) {
+        a.stamina += 20;
         damage = chargeDamage;
         chargePercent = -10;
-        bossChance = 5;
+        bossChance = -1;
     }
     damage = damage - (damage * b.shield) / 100;
-    if(strcmp(a.name, Player.name) == 0 && parry(Player, Boss, 0))
-    {
+    if(strcmp(a.name, Player.name) == 0) {
+        b.shield -= 2;
         chargePercent += 10;
-        if(chargePercent > 100) chargePercent = 100;
-        return;
+        if(parry(a, b, bossChance))
+            return;
     }
-    if(strcmp(a.name, Boss.name) == 0 && parry(Boss, Player, bossChance)) return;
-    if(strcmp(b.name, Boss.name) == 0)
-    {
-        chargePercent += 10;
-        if(chargePercent > 100) chargePercent = 100;
+    else if(strcmp(a.name, Boss.name) == 0) {
+        b.shield -= 2;
+        if(parry(a, b, 0))
+            return;
     }
-    b.shield -= 2;
     b.hp -= damage;
     fancy_print(-1, name_text_color, a.name);
     cout << " attacked " << b.name << " for ";
