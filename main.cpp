@@ -1,6 +1,7 @@
 /// very advanced fight game made by a chad and a furry
 
 #include <bits/stdc++.h>
+#include <windows.h>
 
 using namespace std;
 
@@ -11,6 +12,15 @@ struct entity{
 
 entity Player, Boss;
 int chargePercent=0;
+const int base_text_color = 10, health_text_color = 12;
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+void print_health(int val)
+{
+    SetConsoleTextAttribute(hConsole, health_text_color);
+    cout << val << " health";
+    SetConsoleTextAttribute(hConsole, base_text_color);
+}
 
 void heal(entity &p) {
     if(p.potions > 0) {
@@ -19,7 +29,9 @@ void heal(entity &p) {
         p.hp += 40;
         if(p.hp > 100)
             p.hp = 100;
-        cout << p.name << " healed and now has " << p.hp << " health" << endl;
+        cout << p.name << " healed and now has ";
+        print_health(p.hp);
+        cout << endl;
     }
     else {
         cout << "You have no potions" << endl;
@@ -83,7 +95,9 @@ void attack(entity &a, entity &b, int chargeDamage) {
     b.shield -= 2;
     b.hp -= damage;
     cout << a.name << " attacked " << b.name << " for " << damage << " damage" << endl;
-    cout << b.name << " now has " << b.hp << " health" << endl;
+    cout << b.name << " now has ";
+    print_health(b.hp);
+    cout << endl;
 }
 
 int chargeWeapon(int chargePercent) {
@@ -134,16 +148,16 @@ int checkAlive(entity &a, entity &b) {
 }
 
 void bossMove(entity &a, entity &b) {
-    if(rand()%100 < 15) {
-        lookForPotions(b);
-        return;
-    }
     if(b.hp < 50 && rand()%100 < 30+(50-b.hp)) {
         if(b.potions == 0) {
             lookForPotions(b);
             return;
         }
         heal(b);
+        return;
+    }
+    if(rand()%100 < 15) {
+        lookForPotions(b);
         return;
     }
     if(b.stamina < 20 || (b.stamina < 60 && rand()%100 < 20)) {
@@ -154,8 +168,12 @@ void bossMove(entity &a, entity &b) {
 }
 
 void showHealthAndPotions(entity &a, entity &b) {
-    cout << a.name << " has " << a.hp << " health and " << a.potions << " potions | stamina at " << a.stamina << " | charge " << chargePercent << "%" << endl;
-    cout << b.name << " has " << b.hp << " health and " << b.potions << " potions | stamina at " << b.stamina << endl;
+    cout << a.name << " has ";
+    print_health(a.hp);
+    cout << " and " << a.potions << " potions | stamina at " << a.stamina << " | charge " << chargePercent << "%" << endl;
+    cout << b.name << " has ";
+    print_health(b.hp);
+    cout << " and " << b.potions << " potions | stamina at " << b.stamina << endl;
 }
 
 void newBossFight(entity &Player, entity &Boss, int &act) {
@@ -226,6 +244,8 @@ void newBossFight(entity &Player, entity &Boss, int &act) {
 
 int main()
 {
+    SetConsoleTextAttribute(hConsole, base_text_color);
+
     srand(time(0));
     cout << "Enter your name: ";
     cin.getline(Player.name, 50);
