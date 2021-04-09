@@ -108,6 +108,17 @@ void addStamina(entity &p) {
     cout << p.name << " waited and raised their stamina to " << p.stamina << endl;
 }
 
+void lookForPotions(entity &p) {
+    int chance = rand()%100;
+    p.stamina += 20;
+    if(chance < 40) {
+        p.potions++;
+        cout << p.name << " has found 1 potion\n";
+    }
+    else
+        cout << p.name << " looked for potions, but didn't find any\n";
+}
+
 int checkAlive(entity &a, entity &b) {
     if(a.hp <= 0)
         return 1;
@@ -117,7 +128,15 @@ int checkAlive(entity &a, entity &b) {
 }
 
 void bossMove(entity &a, entity &b) {
-    if(b.hp < 50 && rand()%100 < 10+(50-b.hp) && b.potions > 0) {
+    if(rand()%100 < 5) {
+        lookForPotions(b);
+        return;
+    }
+    if(b.hp < 50 && rand()%100 < 10+(50-b.hp)) {
+        if(b.potions == 0) {
+            lookForPotions(b);
+            return;
+        }
         heal(b);
         return;
     }
@@ -142,7 +161,7 @@ int main()
 	while(1)
     {
         showHealthAndPotions(Player, Boss);
-        cout << "Enter your action: (attack/heal/wait/charge)\n";
+        cout << "Enter your action: (attack/heal/wait/charge/search)\n";
         string action;
         cin >> action;
         if(action == "attack" && Player.stamina >= 20)
@@ -159,6 +178,8 @@ int main()
                 continue;
             }
         }
+        else if(action == "search")
+            lookForPotions(Player);
         else
         {
             cout << "Invalid action\n";
