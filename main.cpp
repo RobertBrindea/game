@@ -11,7 +11,7 @@ struct entity{
 };
 
 entity Player, Boss;
-int chargePercent=100;
+int chargePercent=0;
 const int base_text_color = 10, health_text_color = 12, damage_text_color = 11;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
